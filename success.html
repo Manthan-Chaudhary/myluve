@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Success!</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden; /* Hide scrollbars */
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        position: relative; /* To position the background video */
+        background: #fbe8eb; /* Light pink background color */
+        color: #333; /* Dark text color for contrast */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw; /* Ensure body takes full width */
+        box-sizing: border-box; /* Include padding and border in element’s total width and height */
+      }
+      .background-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures the video covers the entire viewport */
+        z-index: -1; /* Places the video behind other content */
+        opacity: 0.6; /* Optional: Adjust opacity for better text visibility */
+        animation: backgroundVideo 1s infinite;
+      }
+      @keyframes backgroundVideo {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      .content {
+        position: relative; /* To place content above the video */
+        z-index: 1; /* Ensures content is above the background video */
+        text-align: center;
+        background: rgba(
+          255,
+          255,
+          255,
+          0.9
+        ); /* Slightly transparent white background for content */
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        border: 2px solid #ffb6c1; /* Soft pink border */
+        max-width: 90%;
+        max-height: 90%;
+        margin: auto; /* Center horizontally */
+      }
+      h1 {
+        color: #ff69b4; /* Hot pink color */
+        font-family: "Dancing Script", cursive;
+        font-size: 2em; /* Adjusted for responsiveness */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+      button {
+        padding: 15px 30px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        background-color: #ffb6c1; /* Light pink color */
+        color: #fff;
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+      button:hover {
+        background-color: #ff69b4; /* Hot pink on hover */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      }
+      .audio-container {
+        margin-top: 20px;
+      }
+      .audio-container audio {
+        display: none;
+      }
+      .audio-container button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #ff69b4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .audio-container button:hover {
+        background-color: #ffb6c1;
+      }
+      .ask-me-anything {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #ffb6c1;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 18px;
+      }
+      .ask-me-anything:hover {
+        background-color: #ff69b4;
+      }
+    </style>
+  </head>
+  <body>
+    <video class="background-video" autoplay muted loop>
+      <source src="./me and mannu.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="content">
+      <h1>Success!</h1>
+      <p>Your response has been recorded.</p>
+      <div class="audio-container">
+        <audio
+          id="audioPlayer"
+          src="https://www.example.com/your-audio.mp3"
+        ></audio>
+        <button id="playButton">Play Audio</button>
+      </div>
+      <a href="form.html" class="ask-me-anything">Ask Me Anything</a>
+    </div>
+    <script>
+      document
+        .getElementById("playButton")
+        .addEventListener("click", function () {
+          const audioPlayer = document.getElementById("audioPlayer");
+          audioPlayer.style.display = "block"; // Show the audio player
+          audioPlayer.play(); // Start playing the audio
+        });
+
+      // Adjust video playback speed
+      const backgroundVideo = document.querySelector(".background-video");
+      backgroundVideo.playbackRate = 0.5;
+    </script>
+  </body>
+</html>

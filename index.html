@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Will You Be My Girlfriend?</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background: url("https://img.freepik.com/free-vector/tiny-hearts-background_23-2148032668.jpg?t=st=1722434601~exp=1722438201~hmac=04fac61508fb46acdf543c0bc0e4dd6792c7b4b8929e2395e1442312d685f4b7&w=826");
+        background-size: cover;
+      }
+      .outer-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        text-align: center;
+        background: url("https://img.freepik.com/free-vector/cute-boy-cheek-pinching-his-girlfriend-happy-valentine-cartoon-character-illustration_56104-367.jpg?t=st=1722433706~exp=1722437306~hmac=39d203797f7a6bb829d780dd131d6470422b1666b95287893da750db40ff46a7&w=740");
+        background-size: cover;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+        position: relative;
+        width: 90%;
+        max-width: 400px;
+      }
+      h1 {
+        margin-bottom: 20px;
+        font-size: 2.5em;
+        color: #ff0000; /* Bright red color */
+        font-family: "Dancing Script", cursive;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      }
+      .buttons {
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+      .buttons button {
+        padding: 15px 30px;
+        font-size: 18px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+        margin: 5px; /* Space between buttons */
+      }
+      .buttons #yesButton {
+        background-color: #ffb6c1; /* Light pink color */
+        color: #fff;
+      }
+      .buttons #noButton {
+        background-color: #ff6347; /* Tomato red */
+        color: #fff;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+      .buttons button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="outer-container">
+      <div class="container">
+        <h1>Will you be my girlfriend?</h1>
+        <div class="buttons">
+          <button id="yesButton" onclick="window.location.href='success.html'">
+            Yes 💖
+          </button>
+          <button
+            id="noButton"
+            onmouseover="handleNoButtonHover()"
+            ontouchstart="handleNoButtonHover()"
+            onclick="handleNoButtonClick()"
+          >
+            No 😭
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      let noButtonClickCount = 0; // Initialize click count
+      const maxClicks = 5; // Maximum number of clicks
+
+      function getRect(element) {
+        return element.getBoundingClientRect();
+      }
+
+      function isOverlapping(rect1, rect2) {
+        return !(
+          rect1.right < rect2.left ||
+          rect1.left > rect2.right ||
+          rect1.bottom < rect2.top ||
+          rect1.top > rect2.bottom
+        );
+      }
+
+      function moveButton() {
+        const noButton = document.getElementById("noButton");
+        const yesButton = document.getElementById("yesButton");
+        const outerContainer = document.querySelector(".outer-container");
+        const containerRect = outerContainer.getBoundingClientRect();
+        const buttonRect = getRect(noButton);
+
+        // Set the bounding box dimensions as 70% of the outer container dimensions
+        const boundingBoxWidth = 0.7 * containerRect.width;
+        const boundingBoxHeight = 0.7 * containerRect.height;
+
+        let newX, newY;
+        let isPositionValid = false;
+
+        while (!isPositionValid) {
+          // Calculate maximum position within the bounding box
+          const maxX = boundingBoxWidth - buttonRect.width;
+          const maxY = boundingBoxHeight - buttonRect.height;
+
+          newX = Math.random() * maxX;
+          newY = Math.random() * maxY;
+
+          noButton.style.left = `${newX}px`;
+          noButton.style.top = `${newY}px`;
+
+          // Check if the button overlaps with the "Yes" button
+          const newNoRect = getRect(noButton);
+          const yesRect = getRect(yesButton);
+
+          isPositionValid =
+            !isOverlapping(newNoRect, yesRect) &&
+            newNoRect.left >= 0 &&
+            newNoRect.top >= 0 &&
+            newNoRect.right <= containerRect.width &&
+            newNoRect.bottom <= containerRect.height;
+        }
+      }
+
+      function handleNoButtonHover() {
+        // Move the button when hovered
+        moveButton();
+      }
+
+      function handleNoButtonClick() {
+        const noButton = document.getElementById("noButton");
+        noButtonClickCount++;
+
+        if (noButtonClickCount > maxClicks) {
+          noButton.style.display = "none"; // Hide the button after max clicks
+        } else {
+          // Reduce button size
+          const scale = 1 - noButtonClickCount * 0.1; // Reduce size by 10% each click
+          noButton.style.transform = `scale(${scale})`;
+
+          // Move button to a new position
+          moveButton();
+        }
+      }
+
+      // Add event listener for touch devices
+      document
+        .getElementById("noButton")
+        .addEventListener("touchstart", handleNoButtonHover);
+    </script>
+  </body>
+</html>

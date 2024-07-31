@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ask Me Anything</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background: #f9f9f9; /* Light background for better contrast */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .form-container {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 90%;
+        width: 400px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #ffb6c1;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #ff69b4;
+      }
+      .results-container {
+        margin-top: 20px;
+      }
+      .response {
+        background: #fff;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .response p {
+        margin: 0;
+      }
+      .response .answer-btn {
+        background-color: #ff69b4;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .response .answer-btn:hover {
+        background-color: #ff1493;
+      }
+      .response .delete-btn {
+        background-color: #ff6347;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        transition: background-color 0.3s;
+      }
+      .response .delete-btn:hover {
+        background-color: #e53e3e;
+      }
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+      .popup textarea {
+        height: 100px;
+      }
+      .popup button {
+        background-color: #ffb6c1;
+      }
+      .popup button:hover {
+        background-color: #ff69b4;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 500;
+      }
+      @media (max-width: 600px) {
+        .form-container {
+          width: 100%;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <h2>Answer the question</h2>
+      <textarea id="answer-text" placeholder="Your answer here"></textarea>
+      <button onclick="submitAnswer()">Submit Answer</button>
+      <button onclick="closePopup()">Cancel</button>
+    </div>
+
+    <div class="form-container">
+      <h1>Ask Me Anything!</h1>
+      <form id="contact-form">
+        <div class="form-group">
+          <label for="message">Message:</label>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Your Message"
+            required
+          ></textarea>
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="results-container" id="results-container">
+      <!-- Responses will be appended here -->
+    </div>
+
+    <script>
+      const resultsContainer = document.getElementById("results-container");
+      const popup = document.getElementById("popup");
+      const overlay = document.getElementById("overlay");
+      let currentResponseId = null;
+
+      // Function to display stored responses
+      function displayResponses() {
+        const responses = JSON.parse(localStorage.getItem("responses")) || [];
+        resultsContainer.innerHTML = "";
+        responses.forEach((response, index) => {
+          const responseDiv = document.createElement("div");
+          responseDiv.className = "response";
+          responseDiv.dataset.id = index;
+          responseDiv.innerHTML = `
+                    <p><strong>Message:</strong> ${response.message}</p>
+                    ${
+                      response.answer
+                        ? `<p><strong>Answer:</strong> ${response.answer}</p>`
+                        : ""
+                    }
+                    <button class="answer-btn" onclick="openPopup(${index})">${
+            response.answer ? "Answered" : "Answer"
+          }</button>
+                    <button class="delete-btn" onclick="deleteResponse(${index})">Delete</button>
+                `;
+          resultsContainer.appendChild(responseDiv);
+        });
+      }
+
+      // Function to handle form submission
+      document
+        .getElementById("contact-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const message = document.getElementById("message").value;
+          const responses = JSON.parse(localStorage.getItem("responses")) || [];
+          responses.push({ message });
+          localStorage.setItem("responses", JSON.stringify(responses));
+          displayResponses();
+          this.reset();
+        });
+
+      // Function to delete a response
+      function deleteResponse(index) {
+        const responses = JSON.parse(localStorage.getItem("responses")) || [];
+        responses.splice(index, 1);
+        localStorage.setItem("responses", JSON.stringify(responses));
+        displayResponses();
+      }
+
+      // Function to open the popup
+      function openPopup(responseId) {
+        currentResponseId = responseId;
+        popup.style.display = "block";
+        overlay.style.display = "block";
+      }
+
+      // Function to close the popup
+      function closePopup() {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+      }
+
+      // Function to submit the answer
+      function submitAnswer() {
+        const answerText = document.getElementById("answer-text").value;
+        const responses = JSON.parse(localStorage.getItem("responses")) || [];
+        responses[currentResponseId].answer = answerText;
+        localStorage.setItem("responses", JSON.stringify(responses));
+        displayResponses();
+        closePopup();
+      }
+
+      // Initial display of responses
+      displayResponses();
+    </script>
+  </body>
+</html>
